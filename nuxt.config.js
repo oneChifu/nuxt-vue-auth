@@ -1,9 +1,14 @@
+import colors from 'vuetify/es5/util/colors';
+
 export default {
+    ssr: true,
+
     // Target: https://go.nuxtjs.dev/config-target
-    target: 'static',
+    target: 'server',
 
     // Global page headers: https://go.nuxtjs.dev/config-head
     head: {
+        titleTemplate: '%s - nuxt-app',
         title: 'nuxt-vue-auth',
         htmlAttrs: {
             lang: 'en',
@@ -17,14 +22,36 @@ export default {
             { hid: 'description', name: 'description', content: '' },
             { name: 'format-detection', content: 'telephone=no' },
         ],
-        link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+        link: [
+            { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+            { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+            {
+                rel: 'preconnect',
+                href: 'https://fonts.gstatic.com',
+                crossorigin: true,
+            },
+            {
+                rel: 'stylesheet',
+                href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap',
+            },
+        ],
+    },
+
+    env: {
+        FIRE_API_KEY: 'AIzaSyD9gk0HaiuNsXLH5DzDGmhX5cMUbhNCWyw',
+        FIRE_AUTH_DOMAIN: 'lavrus-main.firebaseapp.com',
+        FIRE_PROJECT_ID: 'lavrus-main',
+        FIRE_STORAGE_BUCKET: 'lavrus-main.appspot.com',
+        FIRE_MESSAGING_SENDER_ID: '862596851892',
+        FIRE_APP_ID: '1:862596851892:web:056809c4d616004528cfe1',
+        FIRE_MEASUREMENT_ID: 'G-V5VVDK1F5L',
     },
 
     // Global CSS: https://go.nuxtjs.dev/config-css
-    css: ['@/assets/css/main.css'],
+    css: [],
 
     // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-    plugins: [],
+    plugins: [{ src: '~/plugins/firebase' }, { src: '~/plugins/auth' }],
 
     // Auto import components: https://go.nuxtjs.dev/config-components
     components: true,
@@ -35,15 +62,17 @@ export default {
         '@nuxtjs/eslint-module',
         // https://go.nuxtjs.dev/stylelint
         '@nuxtjs/stylelint-module',
-        // post css
-        '@nuxt/postcss8',
+        // https://go.nuxtjs.dev/vuetify
+        '@nuxtjs/vuetify',
     ],
 
     // Modules: https://go.nuxtjs.dev/config-modules
-    modules: [
-        // https://go.nuxtjs.dev/axios
-        '@nuxtjs/axios',
-    ],
+    modules: ['@nuxtjs/axios'],
+
+    // Nuxt.js Middleware
+    router: {
+        middleware: ['router-auth'],
+    },
 
     // Axios module configuration: https://go.nuxtjs.dev/config-axios
     axios: {
@@ -51,13 +80,54 @@ export default {
         baseURL: '/',
     },
 
-    // Build Configuration: https://go.nuxtjs.dev/config-build
-    build: {
-        postcss: {
-            plugins: {
-                tailwindcss: {},
-                autoprefixer: {},
+    // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
+    vuetify: {
+        customVariables: ['~/assets/scss/variables.scss'],
+        theme: {
+            dark: false,
+            themes: {
+                light: {
+                    primary: colors.blue,
+                    accent: colors.grey,
+                    secondary: colors.amber.darken1,
+                    info: colors.teal.lighten1,
+                    warning: colors.amber.base,
+                    error: colors.deepOrange.accent4,
+                    success: colors.green.accent3,
+                },
             },
         },
     },
-}
+
+    fireTEST: {
+        // config: {
+        //     apiKey: 'AIzaSyD9gk0HaiuNsXLH5DzDGmhX5cMUbhNCWyw',
+        //     authDomain: 'lavrus-main.firebaseapp.com',
+        //     projectId: 'lavrus-main',
+        //     storageBucket: 'lavrus-main.appspot.com',
+        //     messagingSenderId: '862596851892',
+        //     appId: '1:862596851892:web:056809c4d616004528cfe1',
+        //     measurementId: 'G-V5VVDK1F5L',
+        // },
+        services: {
+            auth: {
+                performance: true,
+                analytics: true,
+                ssr: {
+                    serverLogin: {
+                        // Takes a duration in milliseconds
+                        sessionLifetime: 0,
+                        // Takes a duration in milliseconds
+                        loginDelay: 50,
+                    },
+                },
+                initialize: {
+                    onAuthStateChangedAction: 'onAuthStateChangedAction',
+                },
+            },
+        },
+    },
+
+    // Build Configuration: https://go.nuxtjs.dev/config-build
+    build: {},
+};
