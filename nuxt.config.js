@@ -4,7 +4,7 @@ export default {
     ssr: true,
 
     // Target: https://go.nuxtjs.dev/config-target
-    target: 'server',
+    target: 'static',
 
     // Global page headers: https://go.nuxtjs.dev/config-head
     head: {
@@ -51,7 +51,7 @@ export default {
     css: [],
 
     // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-    plugins: [{ src: '~/plugins/firebase' }, { src: '~/plugins/auth' }],
+    // plugins: [{ src: '~/plugins/auth' }],
 
     // Auto import components: https://go.nuxtjs.dev/config-components
     components: true,
@@ -67,12 +67,12 @@ export default {
     ],
 
     // Modules: https://go.nuxtjs.dev/config-modules
-    modules: ['@nuxtjs/axios'],
+    modules: ['@nuxtjs/axios', '~/modules/firebase.js'],
 
     // Nuxt.js Middleware
-    router: {
-        middleware: ['router-auth'],
-    },
+    // router: {
+    //     middleware: ['router-auth'],
+    // },
 
     // Axios module configuration: https://go.nuxtjs.dev/config-axios
     axios: {
@@ -99,32 +99,32 @@ export default {
         },
     },
 
-    fireTEST: {
-        // config: {
-        //     apiKey: 'AIzaSyD9gk0HaiuNsXLH5DzDGmhX5cMUbhNCWyw',
-        //     authDomain: 'lavrus-main.firebaseapp.com',
-        //     projectId: 'lavrus-main',
-        //     storageBucket: 'lavrus-main.appspot.com',
-        //     messagingSenderId: '862596851892',
-        //     appId: '1:862596851892:web:056809c4d616004528cfe1',
-        //     measurementId: 'G-V5VVDK1F5L',
-        // },
+    firebase: {
+        config: {
+            apiKey: 'AIzaSyD9gk0HaiuNsXLH5DzDGmhX5cMUbhNCWyw',
+            authDomain: 'lavrus-main.firebaseapp.com',
+            projectId: 'lavrus-main',
+            storageBucket: 'lavrus-main.appspot.com',
+            messagingSenderId: '862596851892',
+            appId: '1:862596851892:web:056809c4d616004528cfe1',
+            measurementId: 'G-V5VVDK1F5L',
+        },
         services: {
-            auth: {
-                performance: true,
-                analytics: true,
-                ssr: {
-                    serverLogin: {
-                        // Takes a duration in milliseconds
-                        sessionLifetime: 0,
-                        // Takes a duration in milliseconds
-                        loginDelay: 50,
-                    },
-                },
-                initialize: {
-                    onAuthStateChangedAction: 'onAuthStateChangedAction',
-                },
-            },
+            auth: true,
+            //         performance: true,
+            //         analytics: true,
+            //         ssr: {
+            //             serverLogin: {
+            //                 // Takes a duration in milliseconds
+            //                 sessionLifetime: 0,
+            //                 // Takes a duration in milliseconds
+            //                 loginDelay: 50,
+            //             },
+            //         },
+            //         initialize: {
+            //             onAuthStateChangedAction: 'onAuthStateChangedAction',
+            //         },
+            //     },
         },
     },
 

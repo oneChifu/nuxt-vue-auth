@@ -2,11 +2,11 @@
     <div>
         <h1>Home page</h1>
 
-        <!-- <pre>{{ authUser }}</pre> -->
+        <pre>{{ isUserAuth }}</pre>
 
-        <div v-if="isAuthUser">
+        <div v-if="isUserAuth">
             <h3>You are is logged in</h3>
-            <pre>{{ authUser }}</pre>
+            <pre>{{ user }}</pre>
 
             <v-btn @click="onLogout">Logout</v-btn>
         </div>
@@ -31,6 +31,8 @@ import { mapActions, mapGetters } from 'vuex';
 export default {
     name: 'HomePage',
 
+    // middleware: 'auth',
+
     asyncData({
         $auth,
         isDev,
@@ -54,7 +56,7 @@ export default {
     }),
 
     computed: {
-        ...mapGetters(['isAuthUser', 'authUser']),
+        ...mapGetters(['isUserAuth', 'user']),
     },
 
     created() {},
@@ -77,8 +79,8 @@ export default {
                 //     this.$auth,
                 //     this.$auth.browserLocalPersistence
                 // );
-                const { user } = await this.$auth.signInWithEmailAndPassword(
-                    this.$auth,
+                const { user } = await this.$firebase.auth.signInWithEmailAndPassword(
+                    this.$firebase.authentication,
                     'onechifu@gmail.com',
                     '123456'
                 );
@@ -100,14 +102,14 @@ export default {
             // }
         },
         async onLogout() {
-            try {
-                await this.$auth.signOut();
-                // this.onSignOutAction();
-
-                // console.log('onLogout', this.onLoginData);
-            } catch (e) {
-                console.error(e);
-            }
+            console.log('FIREBASE', this.$firebase.auth)
+            // try {
+                await this.$firebase.authentication.signOut();
+                console.log('SIGN OUT PAGE')
+            //     // this.onSignOutAction();
+            // } catch (e) {
+            //     console.error(e);
+            // }
         },
     },
 

@@ -21,6 +21,8 @@
 export default {
     name: 'LoginPage',
 
+    middleware: 'auth',
+
     data: () => ({
         email: 'onechifu@gmail.com',
         password: '123456',

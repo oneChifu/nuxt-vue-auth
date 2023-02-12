@@ -1,9 +1,47 @@
+// import Cookies from 'js-cookie';
+// import cookieParser from 'cookie-parser';
+// import Cookies from 'js-cookie';
+import cookieparser from 'cookieparser';
+import jwtDecode from 'jwt-decode';
+// import Cookies from 'js-cookie';
+
+// const cookieParser = (cookie) => {
+//     return cookie
+//         .split(';')
+//         .map((cookie) => cookie.split('='))
+//         .reduce((acc, cookie) => {
+//             acc[decodeURIComponent(cookie[0].trim())] = decodeURIComponent(
+//                 cookie[1].trim()
+//             );
+//             return acc;
+//         }, {});
+// };
+
 export const state = () => ({
-    authUser: null,
+    user: {},
 });
 
 export const actions = {
     nuxtServerInit({ commit, dispatch, state }, { $fire, req, res }) {
+        // if (process.server && process.static) return;
+        if (!req.headers.cookie) return;
+
+        // console.log('process.server', process.server);
+        // console.log('process.static', process.static);
+
+        // const accessToken = cookieparser.parse(req.headers.cookie);
+        // console.log('parsed', accessToken);
+        const { access_token: accessToken } = cookieparser.parse(
+            req.headers.cookie
+        );
+        const { user_id: uid, email } = jwtDecode(accessToken);
+
+        commit('SET_USER', {
+            uid,
+            email,
+        });
+
+        // const
         // console.log('ENV', process.env.FIRE_API_KEY);
         // const isLoggedIn =
         // console.log('nuxtServerInit currentUser', $fire.auth.currentUser)
@@ -11,7 +49,6 @@ export const actions = {
         // console.log('nuxtServerInit user', user)
         // console.log('nuxtServerInit fire', $fire.auth.currentUser)
         // const user = $fire.auth.currentUser
-        // console.log('authUser', authUser)
         // const user = await $fire.auth.currentUser
         // console.log('res.locals.user', user)
         // if (user && user.uid) {
@@ -27,7 +64,6 @@ export const actions = {
         //         metadata,
         //         accessToken,
         //     } = res.locals.user || user
-        //     // console.log('USER', authUser)
         //     await dispatch('onAuthStateChangedAction', {
         //         uid,
         //         email,
@@ -41,9 +77,9 @@ export const actions = {
         // }
     },
 
-    onAuthStateChangedAction({ commit, dispatch }, authUser) {
-        console.log('onAuthStateChangedAction', authUser);
-        if (!authUser) {
+    onAuthStateChangedAction({ commit, dispatch }, user) {
+        console.log('onAuthStateChangedAction', user);
+        if (!Object.values(user).length) {
             dispatch('onSignOutAction');
             return;
         }
@@ -58,7 +94,7 @@ export const actions = {
             photoURL,
             metadata,
             isAnonymous,
-        } = authUser;
+        } = user;
 
         console.log('onAuthStateChangedAction 2', token);
 
@@ -76,25 +112,26 @@ export const actions = {
     },
 
     onSignOutAction({ commit }) {
-        commit('SET_USER', null);
+        commit('SET_USER', {});
+        console.log('SIGN OUT STATE');
     },
 };
 
 export const mutations = {
     SET_USER(state, data) {
         console.log('SET_USER', data);
-        state.authUser = data;
+        state.user = data;
     },
 };
 
 export const getters = {
-    isAuthUser(state) {
+    isUserAuth(state) {
         // console.log('SET_USER', data)
-        return Boolean(state.authUser && state.authUser.uid);
+        return state.user.uid;
     },
 
-    authUser(state) {
+    user(state) {
         // console.log('SET_USER', data)
-        return state.authUser;
+        return state.user;
     },
 };
